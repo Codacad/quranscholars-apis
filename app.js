@@ -12,8 +12,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://quranscholars.vercel.app/",
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    origin: process.env.ORIGIN,
+    methods: "GET, POST, PUT, DELETE, PATCH",
     credentials: true,
   })
 );
