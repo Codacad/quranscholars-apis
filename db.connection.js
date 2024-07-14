@@ -4,7 +4,7 @@ export const dbCOnnection = async () => {
   const uri = "mongodb://0.0.0.0:27017/users"
   try {
        const db = await mongoose.connect(process.env.MONGO_URI);
-        console.log(`Mongodb connected on ${db.connection.host}`);
+        console.log(`Mongodb connected`);
   } catch (error) {
     console.log(error.message);
     process.exit(1);
