@@ -27,3 +27,12 @@ export const createMessage = async (req, res) => {
     console.log(error.message);
   }
 };
+
+export const getMessages = async (req, res) => {
+  try {
+    const messages = await Message.find();
+    res.status(200).send({ messages });
+  } catch (error) {
+    res.status(400).send({ message: "Error getting messages" });
+  }
+};
