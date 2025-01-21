@@ -7,12 +7,15 @@ import { dbCOnnection } from "./db.connection.js";
 import cookieParser from "cookie-parser";
 configDotenv();
 dbCOnnection();
+setInterval(() => {
+  dbCOnnection();
+}, 1000 * 60 * 60 * 24);
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.ORIGIN,
+    origin: ["http://localhost:3001", process.env.ORIGIN],
     methods: "GET, POST, PUT, DELETE, PATCH",
     credentials: true,
   })
@@ -20,9 +23,9 @@ app.use(
 app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Hello World");
-})
-app.use("/api/users", userRoutes);
-app.use("/api/messages", messageRoutes);
+});
+app.use("/api", userRoutes);
+app.use("/api", messageRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT} Port`);
