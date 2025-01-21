@@ -42,8 +42,9 @@ export const login = async (req, res) => {
     }
 
     const isPasswordMatch = await user.comparePassword(password);
+    console.log(isPasswordMatch)
     if (!isPasswordMatch) {
-      return res.statu(401).send({ message: "Incorrect Password" });
+      return res.status(401).send({ message: "Incorrect Password" });
     }
 
     const token = jwt.sign(
