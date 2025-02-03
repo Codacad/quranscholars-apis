@@ -53,14 +53,14 @@ export const login = async (req, res) => {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 1000,
-      sameSite: "none"
+      sameSite: "none",
     });
     return res.status(200).send({
-      message: "Logged in successfully",
       _id: user._id,
       fullname: user.fullname,
       email: user.email,
       role: user.role,
+      expiresIn: Date.now() + 60 * 60 * 1000,
     });
   } catch (error) {
     res.status(400).send({ error: error.message.split(":")[2] });
@@ -71,7 +71,7 @@ export const logout = async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none"
+    sameSite: "none",
   });
   return res.status(200).send({ messag: "Logged out" });
 };

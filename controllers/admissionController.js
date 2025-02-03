@@ -1,7 +1,7 @@
 import Admission from "../models/admission/admission.js";
 export const admissions = async (req, res) => {
   try {
-    const admissions = await Admission.find({ user: req.user._id }).populate(
+    const admissions = await Admission.find({ email: req.user.email }).populate(
       "user",
       "fullname email role createdAt updatedAT"
     );
