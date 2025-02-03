@@ -33,7 +33,6 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const user = await User.findOne({ email });
     if (!user) {
@@ -51,12 +50,12 @@ export const login = async (req, res) => {
     });
 
     res.cookie("token", token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 1000,
-      sameSite: "none",
+      sameSite: "none"
     });
-    res.status(200).send({
+    return res.status(200).send({
       message: "Logged in successfully",
       _id: user._id,
       fullname: user.fullname,
@@ -72,7 +71,7 @@ export const logout = async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    sameSite: "none"
   });
   return res.status(200).send({ messag: "Logged out" });
 };
