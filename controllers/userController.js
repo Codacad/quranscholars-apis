@@ -3,7 +3,6 @@ import User from "../models/user/userModel.js";
 import jwt from "jsonwebtoken";
 export const register = async (req, res) => {
   const { fullname, email, password } = req.body;
-
   try {
     const isUserExist = await User.findOne({ email });
     if (isUserExist) {
@@ -28,7 +27,7 @@ export const register = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(400).send({ error: error.message.split(":")[2] });
+    res.status(400).send({ message: error.message.split(":")[2] });
   }
 };
 
@@ -42,18 +41,14 @@ export const login = async (req, res) => {
     }
 
     const isPasswordMatch = await user.comparePassword(password);
-    console.log(isPasswordMatch)
+    console.log(isPasswordMatch);
     if (!isPasswordMatch) {
       return res.status(401).send({ message: "Incorrect Password" });
     }
 
-    const token = jwt.sign(
-      { id: user._id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1h",
-      }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -61,15 +56,13 @@ export const login = async (req, res) => {
       maxAge: 60 * 60 * 1000,
       sameSite: "none",
     });
-    res
-      .status(200)
-      .send({
-        message: "Logged in successfully",
-        _id: user._id,
-        fullname: user.fullname,
-        email: user.email,
-        role: user.role,
-      });
+    res.status(200).send({
+      message: "Logged in successfully",
+      _id: user._id,
+      fullname: user.fullname,
+      email: user.email,
+      role: user.role,
+    });
   } catch (error) {
     res.status(400).send({ error: error.message.split(":")[2] });
   }

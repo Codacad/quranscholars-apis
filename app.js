@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
+import admissionRoutes from './routes/admissionRoutes.js'
 import { configDotenv } from "dotenv";
 import { dbCOnnection } from "./db.connection.js";
 import cookieParser from "cookie-parser";
@@ -26,6 +28,8 @@ app.get("/", (req, res) => {
 });
 app.use("/api", userRoutes);
 app.use("/api", messageRoutes);
+app.use("/api", dashboardRoutes);
+app.use("/api", admissionRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT} Port`);
