@@ -3,7 +3,7 @@ import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
-import admissionRoutes from './routes/admissionRoutes.js'
+import admissionRoutes from "./routes/admissionRoutes.js";
 import { configDotenv } from "dotenv";
 import { dbCOnnection } from "./db.connection.js";
 import cookieParser from "cookie-parser";
@@ -17,8 +17,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:3001", process.env.ORIGIN],
-    methods: "GET, POST, PUT, DELETE, PATCH",
+    origin: [process.env.PRODUCTION_ORIGIN, "http://localhost:3001"],
+    methods: ["GET, POST, PUT, DELETE, PATCH"],
     credentials: true,
   })
 );
