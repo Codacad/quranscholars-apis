@@ -44,16 +44,16 @@ export const login = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1m",
+      expiresIn: "1h",
     });
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 1000,
+      maxAge: 60 * 60 * 1000,
       sameSite: "None",
     });
-    const expiresIn = Date.now() + 60 * 1000;
+    const expiresIn = Date.now() + 60 * 60 * 1000;
     res.status(200).send({
       _id: user._id,
       fullname: user.fullname,
