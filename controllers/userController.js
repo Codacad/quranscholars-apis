@@ -54,14 +54,14 @@ export const login = async (req, res) => {
       maxAge: 60 * 1000,
       sameSite: "none",
     });
-    const expiresIn = Date.now() + 60 * 60 * 1000;
+    const expiresIn = Date.now() + 60 * 1000;
     console.log(expiresIn);
     return res.status(200).send({
       _id: user._id,
       fullname: user.fullname,
       email: user.email,
       role: user.role,
-      // expiresIn,
+      expires: expiresIn,
     });
   } catch (error) {
     res.status(400).send({ error: error.message.split(":")[2] });
