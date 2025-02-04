@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import User from "../models/user/userModel.js";
 import jwt from "jsonwebtoken";
 export const register = async (req, res) => {
@@ -52,11 +51,10 @@ export const login = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 1000,
-      sameSite: "none",
+      sameSite: "None",
     });
     const expiresIn = Date.now() + 60 * 1000;
-    console.log(expiresIn);
-    return res.status(200).send({
+    res.status(200).send({
       _id: user._id,
       fullname: user.fullname,
       email: user.email,
@@ -72,7 +70,7 @@ export const logout = async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    sameSite: "None",
   });
   return res.status(200).send({ messag: "Logged out" });
 };
