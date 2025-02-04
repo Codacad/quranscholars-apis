@@ -40,27 +40,28 @@ export const login = async (req, res) => {
     }
 
     const isPasswordMatch = await user.comparePassword(password);
-    console.log(isPasswordMatch);
     if (!isPasswordMatch) {
       return res.status(401).send({ message: "Incorrect Password" });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "1m",
     });
 
     res.cookie("token", token, {
-      httpOnly: false,
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 1000,
+      maxAge: 60 * 1000,
       sameSite: "none",
     });
+    const expiresIn = Date.now() + 60 * 60 * 1000;
+    console.log(expiresIn);
     return res.status(200).send({
       _id: user._id,
       fullname: user.fullname,
       email: user.email,
       role: user.role,
-      expiresIn: Date.now() + 60 * 60 * 1000,
+      // expiresIn,
     });
   } catch (error) {
     res.status(400).send({ error: error.message.split(":")[2] });

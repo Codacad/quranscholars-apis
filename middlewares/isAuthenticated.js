@@ -9,7 +9,6 @@ export const isAuthenticatedUser = async (req, res, next) => {
       return res.status(401).json({ message: "User not found" });
     }
     req.user = user;
-    req.expires = Date.now() + 60 * 60 * 1000;
     next();
   } catch (error) {
     return res.status(401).json({ message: "Invalid token" });

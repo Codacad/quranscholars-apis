@@ -24,7 +24,7 @@ app.use(
 );
 app.use(express.json());
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.send({ Api: "Hello" });
 });
 app.use("/api", userRoutes);
 app.use("/api", messageRoutes);
