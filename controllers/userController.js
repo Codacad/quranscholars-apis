@@ -51,7 +51,7 @@ export const login = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 1000,
-      sameSite: "None",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     });
     const expiresIn = Date.now() + 60 * 60 * 1000;
     res.status(200).send({
@@ -70,7 +70,7 @@ export const logout = async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "None",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
   });
   return res.status(200).send({ messag: "Logged out" });
 };

@@ -3,7 +3,7 @@ export const admissions = async (req, res) => {
   try {
     const admissions = await Admission.find({ email: req.user.email }).populate(
       "user",
-      "fullname email role createdAt updatedAT"
+      "fullname email role createdAt updatedAt"
     );
     res.json(admissions);
   } catch (error) {
@@ -24,9 +24,10 @@ export const getAdmission = async (req, res) => {
     gender,
     selectedCourses,
   } = req.body;
-  // console.log(req.user._id);
-  console.log(req.user);
   try {
+    const isEmailUsed = await Admission.findOne({ email });
+    if (isEmailUsed)
+      return res.status(404).send({ message: "Email is registered with us" });
     const newAdmission = new Admission({
       fullName,
       email,

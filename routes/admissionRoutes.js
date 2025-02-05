@@ -8,6 +8,6 @@ import { isAuthenticatedUser } from "../middlewares/isAuthenticated.js";
 const router = Router();
 
 router.get("/admissions", isAuthenticatedUser, admissions);
-router.post("/admission/fill", isAuthenticatedUser, getAdmission);
+router.post("/admission/join", isAuthenticatedUser, getAdmission);
 
 export default router;
