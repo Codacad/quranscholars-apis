@@ -8,6 +8,7 @@ import { configDotenv } from "dotenv";
 import { dbCOnnection } from "./db.connection.js";
 import cookieParser from "cookie-parser";
 import { performance } from "perf_hooks";
+import compression from "compression";
 configDotenv();
 dbCOnnection();
 setInterval(() => {
@@ -45,6 +46,7 @@ app.use("/api", messageRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", admissionRoutes);
 
+app.use(compression());
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT} Port`);
 });
