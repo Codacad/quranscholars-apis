@@ -8,7 +8,7 @@ import { configDotenv } from "dotenv";
 import { dbCOnnection } from "./db.connection.js";
 import cookieParser from "cookie-parser";
 import { performance } from "perf_hooks";
-// import compression from "compression";
+import compression from "compression";
 configDotenv();
 dbCOnnection();
 setInterval(() => {
@@ -17,10 +17,10 @@ setInterval(() => {
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(cookieParser());
-
+const allowedOrigins = process.env.ORIGIN_URLS.split(",");
 app.use(
   cors({
-    origin: ["http://localhost:3001", "https://www.quranscholar.in"],
+    origin: allowedOrigins,
     methods: ["GET, POST, PUT, DELETE, PATCH"],
     credentials: true,
   })
@@ -48,7 +48,7 @@ app.use("/api", messageRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", admissionRoutes);
 
-// app.use(compression());
+app.use(compression());
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT} Port`);
 });
