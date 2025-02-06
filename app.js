@@ -7,6 +7,7 @@ import admissionRoutes from "./routes/admissionRoutes.js";
 import { configDotenv } from "dotenv";
 import { dbCOnnection } from "./db.connection.js";
 import cookieParser from "cookie-parser";
+import { performance } from "perf_hooks";
 configDotenv();
 dbCOnnection();
 setInterval(() => {
@@ -22,6 +23,19 @@ app.use(
     credentials: true,
   })
 );
+app.use((req, res, next) => {
+  const start = performance.now();
+  res.on("finish", () => {
+    const end = performance.now();
+    console.log(
+      `[${new Date().toISOString()}] ${req.method} ${req.originalUrl} - ${(
+        end - start
+      ).toFixed(2)}ms`
+    );
+  });
+  next();
+});
+
 app.use(express.json());
 app.get("/", (req, res) => {
   res.send({ Api: "Hello" });

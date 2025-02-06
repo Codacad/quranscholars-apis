@@ -12,6 +12,7 @@ export const register = async (req, res) => {
       fullname,
       email,
       password,
+      role: email === process.env.ADMIN ? "admin" : "user",
     };
 
     const userCreated = await User.create(user);
