@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 const userSchema = new Schema(
   {
@@ -50,4 +50,5 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 };
 
 const User = model("User", userSchema);
+User.createIndexes({ email: 1 });
 export default User;
