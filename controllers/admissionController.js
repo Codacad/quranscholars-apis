@@ -1,16 +1,15 @@
 import Admission from "../models/admission/admission.js";
 export const admissions = async (req, res) => {
   try {
-    const admissions = await Admission.find({ email: req.user.email }).populate(
-      "user",
-      "fullname email role createdAt updatedAt"
-    );
-    res.json(admissions);
+    const admissions = await Admission.find({
+      email: req.user.email,
+    }).populate("user", "fullname email role createdAt updatedAt");
+    res.status(200).json(admissions);
   } catch (error) {
     res.status(400).send(error.message);
   }
 };
-export const getAdmission = async (req, res) => {
+export const join = async (req, res) => {
   const {
     fullName,
     email,
@@ -27,7 +26,10 @@ export const getAdmission = async (req, res) => {
   try {
     const isEmailUsed = await Admission.findOne({ email });
     if (isEmailUsed)
-      return res.status(404).send({ message: "Email is registered with us" });
+      return res.status(404).send({
+        message:
+          "Your admission is already registered. A user can have only one admission.",
+      });
     const newAdmission = new Admission({
       fullName,
       email,
@@ -47,5 +49,25 @@ export const getAdmission = async (req, res) => {
     res.status(201).json(admission);
   } catch (error) {
     res.status(401).send({ message: error.message.split(":")[2] });
+  }
+};
+
+export const updateAdmissionDetails = async (req, res) => {
+  console.log(req.body);
+  try {
+    const admission = await Admission.findOneAndUpdate(
+      { user: req.user._id },
+      { ...req.body },
+      { new: true }
+    );
+
+    if (!admission)
+      return res.status(404).json({ message: "Admission not found" });
+
+    res
+      .status(200)
+      .json({ message: "Admission details updated successfully", admission });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };

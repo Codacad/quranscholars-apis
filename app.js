@@ -52,3 +52,5 @@ app.use(compression());
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT} Port`);
 });
+
+export default app

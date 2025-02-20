@@ -5,16 +5,18 @@ export const register = async (req, res) => {
   try {
     const isUserExist = await User.findOne({ email });
     if (isUserExist) {
-      return res.status(400).json({ message: "User already exist" });
+      return res.status(401).json({ message: "User already exist" });
     }
+    const { ADMIN_EMAILS } = process.env;
+    const adminEmails = ADMIN_EMAILS.split(",");
     const user = {
       fullname,
       email,
       password,
-      role: email === process.env.ADMIN ? "admin" : "user",
+      role: adminEmails.includes(email) ? "admin" : "user",
     };
     const userCreated = await User.create(user);
-    res.status(200).send({
+    res.status(201).send({
       message: "Regitered Successfully",
       user: {
         _id: userCreated._id,
@@ -60,7 +62,7 @@ export const login = async (req, res) => {
       expires: expiresIn,
     });
   } catch (error) {
-    res.status(400).send({ error: error.message.split(":")[2] });
+    res.status(401).send({ error: error.message.split(":")[2] });
   }
 };
 
