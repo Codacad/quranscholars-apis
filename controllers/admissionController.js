@@ -53,18 +53,23 @@ export const join = async (req, res) => {
 };
 
 export const updateAdmissionDetails = async (req, res) => {
-  console.log(req.body);
   try {
+    for (let key in req.body) {
+      if (key === "email") {
+        return res.status(400).json({ message: "Email cannot be updated" });
+      }
+    }
     const admission = await Admission.findOneAndUpdate(
       { user: req.user._id },
       { ...req.body },
       { new: true }
     );
 
-    if (!admission)
+    if (!admission) {
       return res.status(404).json({ message: "Admission not found" });
+    }
 
-    res
+    return res
       .status(200)
       .json({ message: "Admission details updated successfully", admission });
   } catch (error) {
