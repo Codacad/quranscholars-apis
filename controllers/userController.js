@@ -2,6 +2,7 @@ import User from "../models/user/userModel.js";
 import jwt from "jsonwebtoken";
 export const register = async (req, res) => {
   const { fullname, email, password } = req.body;
+  console.log(req.body);
   try {
     const isUserExist = await User.findOne({ email });
     if (isUserExist) {

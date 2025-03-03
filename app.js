@@ -7,14 +7,13 @@ import admissionRoutes from "./routes/admissionRoutes.js";
 import { configDotenv } from "dotenv";
 import { dbCOnnection } from "./db.connection.js";
 import cookieParser from "cookie-parser";
-import { performance } from "perf_hooks";
-import compression from "compression";
 configDotenv();
 dbCOnnection();
 setInterval(() => {
   dbCOnnection();
 }, 1000 * 60 * 60 * 24);
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 app.use(cookieParser());
 const allowedOrigins = process.env.ORIGIN_URLS.split(",");
@@ -25,21 +24,10 @@ app.use(
     credentials: true,
   })
 );
-app.options("*", cors());
-app.use((req, res, next) => {
-  const start = performance.now();
-  res.on("finish", () => {
-    const end = performance.now();
-    console.log(
-      `[${new Date().toISOString()}] ${req.method} ${req.originalUrl} - ${(
-        end - start
-      ).toFixed(2)}ms`
-    );
-  });
-  next();
-});
-
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.options("*", cors());
+
 app.get("/", (req, res) => {
   res.send({ Api: "Hello" });
 });
@@ -48,9 +36,8 @@ app.use("/api", messageRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", admissionRoutes);
 
-app.use(compression());
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT} Port`);
 });
 
-export default app
+export default app;
