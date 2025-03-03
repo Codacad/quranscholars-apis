@@ -16,10 +16,22 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 app.use(cookieParser());
-const allowedOrigins = process.env.ORIGIN_URLS.split(",");
+const allowedOrigins = process.env.ORIGIN_URLS
+  ? process.env.ORIGIN_URLS.split(",")
+  : ["http://localhost:3001", "https://www.quranscholar.in"]; // Fallback for local development
+
+console.log("Allowed Origins:", allowedOrigins); // Debugging line
+
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      console.log("Origin:", origin); // Log the origin
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
