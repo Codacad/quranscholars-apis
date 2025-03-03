@@ -27,6 +27,7 @@ export const register = async (req, res) => {
       },
     });
   } catch (error) {
+    console.log(error);
     res.status(400).send({ message: error.message.split(":")[2] });
   }
 };
