@@ -1,5 +1,6 @@
 import User from "../models/user/userModel.js";
 import jwt from "jsonwebtoken";
+
 export const register = async (req, res) => {
   const { fullname, email, password } = req.body;
   console.log(req.body);
@@ -76,3 +77,4 @@ export const logout = async (req, res) => {
   });
   return res.status(200).send({ messag: "Logged out" });
 };
+
