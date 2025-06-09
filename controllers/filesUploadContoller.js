@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename)
 export const profilePictureUpload = async (req, res) => {
     const file = req.file
     const userId = req.user._id
+    console.log(req.user)
     try {
         // 1. Check if file is present in the request
         if (!file) res.status(404).send({ message: "no file uploaded" })
@@ -37,7 +38,7 @@ export const profilePictureUpload = async (req, res) => {
             // 8. Delete old picture from Firebase if it exists
             if (oldFileName) {
                 const oldFile = bucket.file(oldFileName)
-                await bucket.delete().catch(() => { })
+                await oldFile.delete().catch((err) => req.status(500).send({ message: 'Deleting file failed', details: err.message }))
             }
 
             // 9. save new reference
@@ -46,7 +47,7 @@ export const profilePictureUpload = async (req, res) => {
                 uploadedAt: new Date(),
             }
             await user.save()
-            
+
             // 10 Send the response
             res.status(200).send({ message: 'Profile picture updated', profilePicture: newFileName })
         })
