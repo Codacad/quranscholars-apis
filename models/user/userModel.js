@@ -27,6 +27,10 @@ const userSchema = new Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    profilePicture: {
+      filename: { type: String, default: "" },
+      uploadedAt: { type: Date }
+    }
   },
   { timestamps: true }
 );
