@@ -32,25 +32,21 @@ export const profilePictureUpload = async (req, res) => {
         stream.on('error', (err) => {
             return res.status(500).json({ error: 'Upload failed', details: err.message });
         })
+
         stream.on('finish', async () => {
             // 8. Delete old picture from Firebase if it exists
             if (oldFileName) {
                 const oldFile = bucket.file(oldFileName)
                 await bucket.delete().catch(() => { })
             }
+
             // 9. save new reference
             user.profilePicture = {
                 filename: newFileName,
                 uploadedAt: new Date(),
             }
             await user.save()
-
-            // Signed URL
-            // const file = bucket.file(newFileName)
-            // const [signedUrl] = await file.getSignedUrl({
-            //     action: "read",
-            //     expires: Date.now() + 60 * 60 * 1000
-            // })
+            
             // 10 Send the response
             res.status(200).send({ message: 'Profile picture updated', profilePicture: newFileName })
         })
@@ -58,5 +54,22 @@ export const profilePictureUpload = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: "Error uploading profile picture" });
+    }
+}
+
+export const profilePictureUrl = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id)
+        if (!user?.profilePicture?.filename) {
+            return res.status(404).send({ message: "Profile picture not found" })
+        }
+        const file = bucket.file(user.profilePicture.filename)
+        const [signedUrl] = await file.getSignedUrl({
+            action: "read",
+            expires: Date.now() + 60 * 60 * 1000
+        })
+        res.json({ url: signedUrl })
+    } catch (error) {
+        res.status(500).send({ message: error.message })
     }
 }
