@@ -2,6 +2,7 @@ import admin from 'firebase-admin'
 import {configDotenv} from 'dotenv';
 configDotenv()
 console.log('Firebase Type ' + process.env.FIREBASE_TYPE);
+console.log('Firebase Type ' + process.env.FIREBASE_PRIVATE_KEY);
 admin.initializeApp({
     credential: admin.credential.cert({
         type: process.env.FIREBASE_TYPE,
