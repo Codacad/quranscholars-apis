@@ -11,7 +11,7 @@ export const profilePictureUpload = async (req, res) => {
     const userId = req.user._id
     try {
         // 1. Check if file is present in the request
-        if (!file) res.status(404).send({ message: "no file uploaded" })
+        if (!file) res.status(404).send({ message: "no file uploaded, please select a file" })
 
         // 2. Create a unique file name for Firebase Storage
         const newFileName = `profile_${userId}_${Date.now()}-${req.file.originalname}`
@@ -63,7 +63,7 @@ export const profilePictureUpload = async (req, res) => {
         stream.end(req.file.buffer)
     } catch (error) {
         console.log(error);
-        res.status(500).send({ message: "Error uploading profile picture" });
+        return res.status(500).send({ message: "Error uploading profile picture" });
     }
 }
 
