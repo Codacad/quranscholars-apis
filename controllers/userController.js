@@ -1,6 +1,7 @@
 import User from "../models/user/userModel.js";
 import jwt from "jsonwebtoken";
-
+import bcrypt from 'bcrypt'
+import bucket from "../firebase.js";
 export const register = async (req, res) => {
   const { fullname, email, password } = req.body;
   console.log(req.body);
@@ -33,6 +34,7 @@ export const register = async (req, res) => {
   }
 };
 
+// Login in
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -69,6 +71,7 @@ export const login = async (req, res) => {
   }
 };
 
+// Logout
 export const logout = async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
@@ -78,3 +81,39 @@ export const logout = async (req, res) => {
   return res.status(200).send({ messag: "Logged out" });
 };
 
+// Delete Profile
+export const deleteProfile = async (req, res) => {
+  const { _id: userId } = req.user
+  const user = await User.findOne(userId)
+  const { password } = req.body
+  try {
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) {
+      return res.status(401).send({ message: 'Password does not match!' })
+    }
+    if (user.profilePicture?.filename) {
+      const file = bucket.file(user.profilePicture.filename)
+      try {
+        const [exists] = await file.exists()
+        if (exists) {
+          file.delete()
+          console.log('Profile picture deleted')
+        } else {
+          console.log('Error in deleting profile picutre')
+        }
+      } catch (error) {
+        console.log(error.message)
+        return res.status(500).send({ message: 'Error deleting file' })
+      }
+    }
+    await User.findByIdAndDelete(userId)
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    })
+    res.status(200).send({ message: 'Profile deleted successfully' })
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+}

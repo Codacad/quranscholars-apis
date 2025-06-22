@@ -1,8 +1,6 @@
 import admin from 'firebase-admin'
 import { configDotenv } from 'dotenv';
 configDotenv()
-console.log('Firebase Type ' + process.env.FIREBASE_TYPE);
-console.log('Firebase Type ' + process.env.FIREBASE_PRIVATE_KEY);
 const rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n');
 if (!rawPrivateKey) {
     throw new Error('FIREBASE_PRIVATE_KEY is not set in environment variables');
