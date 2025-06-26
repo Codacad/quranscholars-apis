@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 const userSchema = new Schema(
   {
@@ -30,7 +30,13 @@ const userSchema = new Schema(
     profilePicture: {
       filename: { type: String, default: "" },
       uploadedAt: { type: Date }
-    }
+    },
+    courses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course'
+      }
+    ]
   },
   { timestamps: true }
 );

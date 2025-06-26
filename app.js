@@ -9,6 +9,7 @@ import filesUploadRoutes from './routes/filesUploadRoutes.js'
 import admissionRoutes from "./routes/admissionRoutes.js";
 import { dbCOnnection } from "./db.connection.js";
 import cookieParser from "cookie-parser";
+import paymentRoutes from './routes/paymentRoute.js'
 dbCOnnection();
 setInterval(() => {
   dbCOnnection();
@@ -49,6 +50,8 @@ app.use("/api", messageRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", admissionRoutes);
 app.use("/api", filesUploadRoutes);
+app.use("/api", paymentRoutes);
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT} Port`);
