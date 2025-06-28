@@ -9,7 +9,7 @@ import filesUploadRoutes from './routes/filesUploadRoutes.js'
 import admissionRoutes from "./routes/admissionRoutes.js";
 import { dbCOnnection } from "./db.connection.js";
 import cookieParser from "cookie-parser";
-import paymentRoutes from './routes/paymentRoute.js'
+// import paymentRoutes from './routes/paymentRoute.js'
 dbCOnnection();
 setInterval(() => {
   dbCOnnection();
@@ -20,9 +20,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cookieParser());
 const allowedOrigins = process.env.ORIGIN_URLS
   ? process.env.ORIGIN_URLS.split(",")
-  : ["http://localhost:3001", "https://www.quranscholar.in"]; 
+  : ["http://localhost:3001", "https://www.quranscholar.in"];
 
-console.log("Allowed Origins:", allowedOrigins); 
+console.log("Allowed Origins:", allowedOrigins);
 
 app.use(
   cors({
@@ -50,7 +50,7 @@ app.use("/api", messageRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", admissionRoutes);
 app.use("/api", filesUploadRoutes);
-app.use("/api", paymentRoutes);
+// app.use("/api", paymentRoutes);
 
 
 app.listen(PORT, () => {
