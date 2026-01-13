@@ -1,4 +1,4 @@
-import Admission from "../models/admission/admission.js";
+import Admission from "../models/admission/admission.model.js";
 export const admissions = async (req, res) => {
   try {
     const admissions = await Admission.find({

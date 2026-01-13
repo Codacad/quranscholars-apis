@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 export const dbCOnnection = async () => {
   try {
-       const db = await mongoose.connect(process.env.MONGO_URI);
-        console.log(`Mongodb connected`);
-        const result = await db.connection.db.admin().ping()
-        console.log(result);
+    await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
+    console.log(`Mongodb connected`);
   } catch (error) {
-    console.log(error.message);
-    process.exit(1);
+    console.error("MongoDB connection error:", error.message);
   }
 }

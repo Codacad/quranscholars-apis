@@ -16,6 +16,8 @@ const userSchema = new Schema(
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         "Please provide a valid email",
       ],
+      unique: true,
+      index: true
     },
     password: {
       type: String,
@@ -60,5 +62,4 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 };
 
 const User = model("User", userSchema);
-User.createIndexes({ email: 1 });
 export default User;

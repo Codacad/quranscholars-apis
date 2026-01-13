@@ -1,5 +1,5 @@
 import express from "express";
-import { profilePictureUpload, profilePictureUrl } from "../controllers/filesUploadContoller.js";
+import { profilePictureUpload, profilePictureUrl } from "../controllers/filesupload.controller.js";
 import multer from "multer";
 import { isAuthenticatedUser } from "../middlewares/isAuthenticated.js";
 const router = express.Router()

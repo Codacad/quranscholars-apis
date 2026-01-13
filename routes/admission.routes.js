@@ -3,7 +3,7 @@ import {
   admissions,
   join,
   updateAdmissionDetails,
-} from "../controllers/admissionController.js";
+} from "../controllers/admission.controller.js";
 import { isAuthenticatedUser } from "../middlewares/isAuthenticated.js";
 
 const router = Router();

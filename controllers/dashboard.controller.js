@@ -1,4 +1,4 @@
-import Admission from "../models/admission/admission.js";
+import Admission from "../models/admission/admission.model.js";
 export const dashbaord = async (req, res) => {
   const admissions = await Admission.findOne({ _id: req.user._id });
   if (!admissions) {

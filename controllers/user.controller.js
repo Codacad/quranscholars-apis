@@ -1,22 +1,23 @@
-import User from "../models/user/userModel.js";
+import User from "../models/user/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt'
 import bucket from "../firebase.js";
+
+// Register
 export const register = async (req, res) => {
   const { fullname, email, password } = req.body;
-  console.log(req.body);
   try {
-    const isUserExist = await User.findOne({ email });
-    if (isUserExist) {
-      return res.status(401).json({ message: "User already exist" });
+    if (!fullname || !email || !password) {
+      return res.status(400).send({ message: "All fields are required" })
     }
-    const { ADMIN_EMAILS } = process.env;
-    const adminEmails = ADMIN_EMAILS.split(",");
+    const normalizedEmail = email.trim().toLowerCase()
+    const { ADMIN_EMAILS } = process.env || "";
+    const adminEmails = (ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase());
     const user = {
       fullname,
       email,
       password,
-      role: adminEmails.includes(email) ? "admin" : "user",
+      role: adminEmails.includes(normalizedEmail) ? "admin" : "user",
     };
     const userCreated = await User.create(user);
     res.status(201).send({
@@ -29,8 +30,10 @@ export const register = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
-    res.status(400).send({ message: error.message.split(":")[2] });
+    if (error.code === 11000) {
+      return res.status(409).json({ message: "User already exists" });
+    }
+    res.status(400).json({ message: "Registration failed" });
   }
 };
 
@@ -38,17 +41,21 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email });
+    if (!email || !password) {
+      return res.status(400).send({ message: "All fields are required" });
+    }
+    const normalizedEmail = email.trim().toLowerCase()
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
-      return res.status(404).send({ message: "Email is not regitered" });
+      return res.status(401).send({ message: "Invalid email or password" });
     }
 
     const isPasswordMatch = await user.comparePassword(password);
     if (!isPasswordMatch) {
-      return res.status(401).send({ message: "Incorrect Password" });
+      return res.status(401).send({ message: "Invalid email or password" });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
@@ -67,7 +74,10 @@ export const login = async (req, res) => {
       expires: expiresIn,
     });
   } catch (error) {
-    res.status(401).send({ error: error.message.split(":")[2] });
+    console.error(error);
+    res.status(500).json({
+      message: "Login failed"
+    });
   }
 };
 

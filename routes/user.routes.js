@@ -1,5 +1,5 @@
 import express from "express";
-import { deleteProfile, login, logout, register } from "../controllers/userController.js";
+import { deleteProfile, login, logout, register } from "../controllers/user.controller.js";
 import { isAuthenticatedUser } from "../middlewares/isAuthenticated.js";
 const router = express();
 

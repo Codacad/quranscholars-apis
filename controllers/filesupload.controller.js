@@ -3,7 +3,7 @@ import bucket from "../firebase.js";
 import path from 'path'
 import { fileURLToPath } from 'url';
 import fs from "fs"
-import User from "../models/user/userModel.js";
+import User from "../models/user/user.model.js";
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 export const profilePictureUpload = async (req, res) => {
