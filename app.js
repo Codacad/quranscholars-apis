@@ -9,6 +9,7 @@ import filesUploadRoutes from './routes/filesupload.routes.js'
 import admissionRoutes from "./routes/admission.routes.js";
 import { dbCOnnection } from "./db.connection.js";
 import cookieParser from "cookie-parser";
+import courseRoutes from './routes/course.routes.js'
 // import paymentRoutes from './routes/paymentRoute.js'
 
 
@@ -44,6 +45,7 @@ app.use("/api", messageRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", admissionRoutes);
 app.use("/api", filesUploadRoutes);
+app.use("/api", courseRoutes);
 // app.use("/api", paymentRoutes);
 
 dbCOnnection().catch(err => {

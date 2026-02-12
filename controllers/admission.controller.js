@@ -1,18 +1,25 @@
-import Admission from "../models/admission/admission.model.js";
+import Admission, {
+  COURSE_OPTIONS,
+} from "../models/admission/admission.model.js";
+
 export const admissions = async (req, res) => {
   try {
     const admissions = await Admission.find({
-      email: req.user.email,
-    }).populate("user", "fullname email role createdAt updatedAt");
+      user: req.user._id,
+    })
+      .populate("user", "fullname email role createdAt updatedAt")
+      .sort({ createdAt: -1 })
+      .lean();
+
     res.status(200).json(admissions);
   } catch (error) {
     res.status(400).send(error.message);
   }
 };
+
 export const join = async (req, res) => {
   const {
     fullName,
-    email,
     address,
     dob,
     contactNumber,
@@ -21,18 +28,28 @@ export const join = async (req, res) => {
     state,
     city,
     gender,
-    selectedCourses,
+    selectedCourses = [],
+    notes,
   } = req.body;
+
   try {
-    const isEmailUsed = await Admission.findOne({ email });
-    if (isEmailUsed)
-      return res.status(404).send({
+    const existingAdmission = await Admission.findOne({
+      $or: [{ user: req.user._id }, { email: req.user.email }],
+    });
+    if (existingAdmission) {
+      return res.status(409).send({
         message:
           "Your admission is already registered. A user can have only one admission.",
       });
+    }
+
+    const uniqueCourses = Array.from(new Set(selectedCourses)).filter((course) =>
+      COURSE_OPTIONS.includes(course)
+    );
+
     const newAdmission = new Admission({
       fullName,
-      email,
+      email: req.user.email?.toLowerCase(),
       user: req.user._id,
       address,
       dob,
@@ -41,29 +58,57 @@ export const join = async (req, res) => {
       zipCode,
       city,
       state,
-      country,
       gender,
-      selectedCourses,
+      selectedCourses: uniqueCourses,
+      notes,
     });
-    const admission = await newAdmission.save();
-    res.status(201).json(admission);
+
+    await newAdmission.save();
+    res.status(201).json(newAdmission);
   } catch (error) {
-    res.status(401).send({ message: error.message.split(":")[2] });
+    res.status(500).json({ message: error.message.split(":").pop().trim() });
   }
 };
 
 export const updateAdmissionDetails = async (req, res) => {
   try {
-    for (let key in req.body) {
-      if (key === "email") {
-        return res.status(400).json({ message: "Email cannot be updated" });
-      }
+    if (req.body?.email) {
+      return res.status(400).json({ message: "Email cannot be updated" });
     }
+
+    const allowedFields = [
+      "fullName",
+      "contactNumber",
+      "dob",
+      "address",
+      "zipCode",
+      "city",
+      "state",
+      "country",
+      "gender",
+      "selectedCourses",
+      "status",
+      "notes",
+    ];
+
+    const payload = Object.entries(req.body || {}).reduce((acc, [key, value]) => {
+      if (allowedFields.includes(key) && value !== undefined) {
+        if (key === "selectedCourses" && Array.isArray(value)) {
+          acc[key] = Array.from(new Set(value)).filter((course) =>
+            COURSE_OPTIONS.includes(course)
+          );
+        } else {
+          acc[key] = value;
+        }
+      }
+      return acc;
+    }, {});
+
     const admission = await Admission.findOneAndUpdate(
       { user: req.user._id },
-      { ...req.body },
-      { new: true }
-    );
+      payload,
+      { new: true, runValidators: true, context: "query" }
+    ).lean();
 
     if (!admission) {
       return res.status(404).json({ message: "Admission not found" });

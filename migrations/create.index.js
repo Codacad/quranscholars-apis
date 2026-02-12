@@ -5,12 +5,11 @@ configDotenv()
 async function createUserIndex() {
     try {
         await mongoose.connect(process.env.MONGO_URI);
-        await User.collection.createIndex({ email: 1 }, { unique: true })
+        await User.collection.createIndex({ email: 1 }, { unique: true, name: 'User Email Unique' })
         console.log("✅ Unique index on email created");
     } catch (error) {
         console.error("❌ Index creation failed:", error.message);
         process.exit(1)
     }
 }
-
 createUserIndex()
