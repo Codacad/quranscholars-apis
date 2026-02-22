@@ -1,17 +1,4 @@
-import { Schema, model } from "mongoose";
-
-export const COURSE_OPTIONS = [
-  "Quran with Tajweed",
-  "Madani Qaida",
-  "Farz Uloom",
-  "Hadith",
-  "Tafseer",
-  "Fiqh (Hanafi)",
-  "Urdu",
-  "Prophet's Stories",
-  "Masnoon Duayen",
-  "Sarf & Nahv",
-];
+import mongoose, { Schema, model } from "mongoose";
 
 const admissionSchema = new Schema(
   {
@@ -96,18 +83,18 @@ const admissionSchema = new Schema(
       trim: true,
     },
     selectedCourses: {
-      type: [String],
-      enum: COURSE_OPTIONS,
+      type: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Course'
+      }],
       required: [true, "Please select at least one course"],
       validate: [
         {
-          validator: (courses) => Array.isArray(courses) && courses.length > 0,
+          validator: (courses) => courses.length > 0,
           message: "Please select at least one course",
         },
         {
-          validator: (courses) =>
-            Array.isArray(courses) &&
-            new Set(courses.map((c) => c.toLowerCase())).size === courses.length,
+          validator: (courses) => new Set(courses.map((c) => c.toString())).size === courses.length,
           message: "Duplicate courses are not allowed",
         },
       ],

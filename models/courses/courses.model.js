@@ -117,7 +117,7 @@ const courseSchema = new Schema({
     toObject: { virtuals: true },
 });
 
-courseSchema.pre('save', function () {
+courseSchema.pre('save', function (next) {
     if (!this.isModified('title')) return next();
     this.slug = `${slugify(this.title, { lower: true, strict: true })}-${Date.now()}`
     next()

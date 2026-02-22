@@ -1,6 +1,8 @@
-import Router from "express";
+import express from "express";
 import { dashbaord } from "../controllers/dashboard.controller.js";
 import { isAuthenticatedUser } from "../middlewares/isAuthenticated.js";
-const router = Router();
+
+const router = express.Router();
+
 router.get("/dashboard", isAuthenticatedUser, dashbaord);
 export default router;

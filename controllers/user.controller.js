@@ -1,4 +1,5 @@
 import User from "../models/user/user.model.js";
+import Admission from "../models/admission/admission.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt'
 import bucket from "../firebase.js";
@@ -11,13 +12,17 @@ export const register = async (req, res) => {
       return res.status(400).send({ message: "All fields are required" })
     }
     const normalizedEmail = email.trim().toLowerCase()
-    const { ADMIN_EMAILS } = process.env || "";
+    const { ADMIN_EMAILS, ALLOW_ADMIN_SELF_REGISTER } = process.env || "";
     const adminEmails = (ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase());
+    const allowAdminSelfRegister = String(ALLOW_ADMIN_SELF_REGISTER).toLowerCase() === "true";
     const user = {
       fullname,
       email,
       password,
-      role: adminEmails.includes(normalizedEmail) ? "admin" : "user",
+      role:
+        allowAdminSelfRegister && adminEmails.includes(normalizedEmail)
+          ? "admin"
+          : "user",
     };
     const userCreated = await User.create(user);
     res.status(201).send({
@@ -88,42 +93,70 @@ export const logout = async (req, res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
   });
-  return res.status(200).send({ messag: "Logged out" });
+  return res.status(200).send({ message: "Logged out" });
+};
+
+export const me = async (req, res) => {
+  const expires = req.auth?.exp ? req.auth.exp * 1000 : null;
+  return res.status(200).json({
+    _id: req.user._id,
+    fullname: req.user.fullname,
+    email: req.user.email,
+    role: req.user.role,
+    expires,
+  });
 };
 
 // Delete Profile
 export const deleteProfile = async (req, res) => {
-  const { _id: userId } = req.user
-  const user = await User.findOne(userId)
-  const { password } = req.body
+  const { _id: userId } = req.user;
+  const { password } = req.body;
+
   try {
-    const isMatch = await bcrypt.compare(password, user.password)
-    if (!isMatch) {
-      return res.status(401).send({ message: 'Password does not match!' })
+    if (!password) {
+      return res.status(400).send({ message: "Password is required" });
     }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    const normalizedEmail = user.email?.toLowerCase();
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).send({ message: "Password does not match!" });
+    }
+
     if (user.profilePicture?.filename) {
-      const file = bucket.file(user.profilePicture.filename)
+      const file = bucket.file(user.profilePicture.filename);
       try {
-        const [exists] = await file.exists()
+        const [exists] = await file.exists();
         if (exists) {
-          file.delete()
-          console.log('Profile picture deleted')
+          await file.delete();
+          console.log("Profile picture deleted");
         } else {
-          console.log('Error in deleting profile picutre')
+          console.log("Error in deleting profile picutre");
         }
       } catch (error) {
-        console.log(error.message)
-        return res.status(500).send({ message: 'Error deleting file' })
+        console.log(error.message);
+        return res.status(500).send({ message: "Error deleting file" });
       }
     }
-    await User.findByIdAndDelete(userId)
-    res.clearCookie('token', {
+
+    // Delete any orphaned or linked admissions for this account.
+    await Admission.deleteMany({
+      $or: [{ user: userId }, { email: normalizedEmail }],
+    });
+
+    await User.findByIdAndDelete(userId);
+    res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-    })
-    res.status(200).send({ message: 'Profile deleted successfully' })
+    });
+    res.status(200).send({ message: "Profile deleted successfully" });
   } catch (error) {
-    res.status(500).send(error.message)
+    res.status(500).send(error.message);
   }
-}
+};

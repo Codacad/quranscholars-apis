@@ -1,4 +1,4 @@
-import Router from "express";
+import express from "express";
 import {
   admissions,
   join,
@@ -6,7 +6,7 @@ import {
 } from "../controllers/admission.controller.js";
 import { isAuthenticatedUser } from "../middlewares/isAuthenticated.js";
 
-const router = Router();
+const router = express.Router();
 
 router.get("/admissions", isAuthenticatedUser, admissions);
 router.post("/admission/join", isAuthenticatedUser, join);

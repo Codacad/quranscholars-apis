@@ -4,14 +4,14 @@ import { buildCoursePayload, validateCoursePayload } from "../utils/course.utils
 export async function getCourses(req, res) {
     try {
         let courses = await Course.find({}).lean();
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             count: courses.length,
             data: courses
         })
     } catch (error) {
         console.error('Error in getting courses', error)
-        res.status(500).json({ success: true, message: 'Error to fetch courses' })
+        return res.status(500).json({ success: false, message: 'Error to fetch courses' })
     }
 }
 
@@ -23,17 +23,17 @@ export async function createCourse(req, res) {
         const courseError = validateCoursePayload(coursePayload)
         const courseExists = await Course.exists({ title: coursePayload.title })
         if (courseError) {
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
                 message: courseError
             })
         }
         if (courseExists) {
-            res.status(409).json({ success: false, message: "Course with this title alredy exists" })
+            return res.status(409).json({ success: false, message: "Course with this title alredy exists" })
         }
         const course = new Course(coursePayload);
         await course.save()
-        res.status(201).json({
+        return res.status(201).json({
             success: true,
             data: course
         })

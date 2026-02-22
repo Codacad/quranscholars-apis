@@ -24,7 +24,8 @@ export const createMessage = async (req, res) => {
       newMessage,
     });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
+    return res.status(500).send({ message: "Unable to send message" });
   }
 };
 

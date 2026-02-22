@@ -1,12 +1,10 @@
-import Admission, {
-  COURSE_OPTIONS,
-} from "../models/admission/admission.model.js";
-
+import Admission from "../models/admission/admission.model.js";
+import Course from "../models/courses/courses.model.js";
 export const admissions = async (req, res) => {
   try {
     const admissions = await Admission.find({
       user: req.user._id,
-    })
+    }).populate('selectedCourses')
       .populate("user", "fullname email role createdAt updatedAt")
       .sort({ createdAt: -1 })
       .lean();
@@ -28,7 +26,6 @@ export const join = async (req, res) => {
     state,
     city,
     gender,
-    selectedCourses = [],
     notes,
   } = req.body;
 
@@ -43,9 +40,6 @@ export const join = async (req, res) => {
       });
     }
 
-    const uniqueCourses = Array.from(new Set(selectedCourses)).filter((course) =>
-      COURSE_OPTIONS.includes(course)
-    );
 
     const newAdmission = new Admission({
       fullName,
@@ -59,7 +53,7 @@ export const join = async (req, res) => {
       city,
       state,
       gender,
-      selectedCourses: uniqueCourses,
+      selectedCourses: req.body.selectedCourses,
       notes,
     });
 
@@ -87,22 +81,27 @@ export const updateAdmissionDetails = async (req, res) => {
       "country",
       "gender",
       "selectedCourses",
-      "status",
       "notes",
     ];
-
-    const payload = Object.entries(req.body || {}).reduce((acc, [key, value]) => {
-      if (allowedFields.includes(key) && value !== undefined) {
-        if (key === "selectedCourses" && Array.isArray(value)) {
-          acc[key] = Array.from(new Set(value)).filter((course) =>
-            COURSE_OPTIONS.includes(course)
-          );
-        } else {
-          acc[key] = value;
+    const payload = {};
+    for (const [key, value] of Object.entries(req.body || {})) {
+      if (!allowedFields.includes(key) || value === undefined) continue;
+      if (key === "selectedCourses" && Array.isArray(value)) {
+        const uniqueIds = [...new Set(value)];
+        const validCourses = await Course.find({
+          _id: { $in: uniqueIds }
+        }).select("_id");
+        if (validCourses.length !== uniqueIds.length) {
+          return res.status(400).json({
+            message: "One or more selected courses are invalid",
+          });
         }
+        payload[key] = validCourses.map(course => course._id);
+      } else {
+        payload[key] = value;
       }
-      return acc;
-    }, {});
+    }
+
 
     const admission = await Admission.findOneAndUpdate(
       { user: req.user._id },
