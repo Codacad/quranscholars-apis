@@ -1,3 +1,4 @@
+import dns from 'node:dns';
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
@@ -15,7 +16,7 @@ import courseRoutes from './routes/course.routes.js'
 import { requestOriginGuard } from "./middlewares/requestOriginGuard.js";
 // import paymentRoutes from './routes/paymentRoute.js'
 
-
+dns.setServers(['1.1.1.1', '8.8.8.8']);
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -23,13 +24,13 @@ app.use(cookieParser());
 const allowedOrigins = process.env.ORIGIN_URLS
   ? process.env.ORIGIN_URLS.split(",").map((origin) => origin.trim()).filter(Boolean)
   : [
-      "http://localhost:3001",
-      "http://localhost:5173",
-      "http://127.0.0.1:5173",
-      "http://localhost:4173",
-      "http://127.0.0.1:4173",
-      "https://www.quranscholar.in",
-    ];
+    "http://localhost:3001",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:4173",
+    "http://127.0.0.1:4173",
+    "https://www.quranscholar.in",
+  ];
 const isProduction = process.env.NODE_ENV === "production";
 
 const createInMemoryRateLimiter = ({ windowMs, max }) => {
