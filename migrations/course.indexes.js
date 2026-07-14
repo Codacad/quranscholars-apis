@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { configDotenv } from "dotenv";
-import Course from "../models/courses/courses.model.js";
+import Course from "../models/course/course.model.js";
 configDotenv()
 const courseIndexes = async () => {
     try {
