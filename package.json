@@ -9,7 +9,8 @@
     "dev": "nodemon app.js",
     "test": "jest",
     "migrate:email_index": "node migrations/create.index.js",
-    "migrate:course_indexes": "node migrations/course.indexes.js"
+    "migrate:course_indexes": "node migrations/course.indexes.js",
+    "migrate:recorded-course_indexes": "node migrations/recorded-course.indexes.js"
   },
   "keywords": [],
   "author": "",

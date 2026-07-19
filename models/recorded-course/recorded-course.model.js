@@ -72,14 +72,11 @@ const recordedCourseSchema = new Schema(
       type: String,
       required: [true, "Course title is required"],
       trim: true,
-      index: true,
     },
     slug: {
       type: String,
-      unique: true,
       lowercase: true,
       trim: true,
-      index: true,
     },
     description: {
       type: String,
@@ -95,25 +92,21 @@ const recordedCourseSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Category",
       required: [true, "Category is required"],
-      index: true,
     },
     language: {
       type: String,
       trim: true,
       default: "English",
-      index: true,
     },
     level: {
       type: String,
       enum: ["Beginner", "Intermediate", "Advanced"],
       required: [true, "Level is required"],
-      index: true,
     },
     instructor: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: [true, "Instructor is required"],
-      index: true,
     },
     thumbnail: {
       type: String,
@@ -168,18 +161,15 @@ const recordedCourseSchema = new Schema(
     published: {
       type: Boolean,
       default: false,
-      index: true,
     },
     featured: {
       type: Boolean,
       default: false,
-      index: true,
     },
     status: {
       type: String,
       enum: ["Draft", "Published", "Archived"],
       default: "Draft",
-      index: true,
     },
     tags: {
       type: [String],
@@ -247,10 +237,6 @@ recordedCourseSchema.pre("validate", function () {
 recordedCourseSchema.virtual("finalPrice").get(function () {
   return this.price.sale ?? this.price.original;
 });
-
-recordedCourseSchema.index({ title: "text", description: "text", tags: "text" });
-recordedCourseSchema.index({ category: 1, level: 1, status: 1 });
-recordedCourseSchema.index({ featured: 1, published: 1 });
 
 const RecordedCourse = model("RecordedCourse", recordedCourseSchema);
 
