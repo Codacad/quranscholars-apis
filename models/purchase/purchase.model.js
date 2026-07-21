@@ -6,13 +6,11 @@ const purchaseSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true,
-        index: true
     },
     courseId: {
         type: Schema.Types.ObjectId,
         ref: 'RecordedCourse',
         required: true,
-        index: true
     },
     amountPaid: {
         type: Number,
@@ -44,7 +42,6 @@ const purchaseSchema = new Schema({
         type: String,
         enum: ['pending', 'completed', 'failed', 'refunded'],
         default: 'pending',
-        index: true
     },
     purchasedAt: {
         type: Date,
@@ -62,9 +59,6 @@ const purchaseSchema = new Schema({
 }, {
     timestamps: true
 });
-
-purchaseSchema.index({ userId: 1, courseId: 1 });
-purchaseSchema.index({ userId: 1, accessStatus: 1 });
 
 const Purchase = model('Purchase', purchaseSchema);
 

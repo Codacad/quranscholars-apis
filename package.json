@@ -10,7 +10,8 @@
     "test": "jest",
     "migrate:email_index": "node migrations/create.index.js",
     "migrate:course_indexes": "node migrations/course.indexes.js",
-    "migrate:recorded-course_indexes": "node migrations/recorded-course.indexes.js"
+    "migrate:recorded-course_indexes": "node migrations/recorded-course.indexes.js",
+    "migrate:purchase_indexes": "node migrations/purchase.indexes.js"
   },
   "keywords": [],
   "author": "",
