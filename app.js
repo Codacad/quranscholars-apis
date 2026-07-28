@@ -13,12 +13,18 @@ import adminRoutes from "./routes/admin.routes.js";
 import { dbCOnnection } from "./db.connection.js";
 import cookieParser from "cookie-parser";
 import courseRoutes from './routes/course.routes.js'
-import { requestOriginGuard } from "./middlewares/requestOriginGuard.js";
+import recordedCourseRoutes from './routes/recorded-course.routes.js'; 
+import instructorRecordedCoursesRoutes from './routes/instructor.recorded-courses.routes.js'; 
+import errorMiddleware from './middlewares/errorMiddleware.js';
+import helmet from 'helmet';
+import { isAuthenticatedUser } from './middlewares/isAuthenticated.js';
+import { isAdmin } from './middlewares/isAdmin.js';
+import isInstructor from './middlewares/isInstructor.js';
 // import paymentRoutes from './routes/paymentRoute.js'
 
 dns.setServers(['1.1.1.1', '8.8.8.8']);
 const app = express();
-
+app.set("trust proxy", 1);
 const PORT = process.env.PORT || 3000;
 app.use(cookieParser());
 const allowedOrigins = process.env.ORIGIN_URLS
@@ -60,22 +66,11 @@ const authLimiter = createInMemoryRateLimiter({
   max: 30,
 });
 
-const securityHeaders = (req, res, next) => {
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-  res.setHeader("X-XSS-Protection", "0");
-  if (isProduction) {
-    res.setHeader(
-      "Strict-Transport-Security",
-      "max-age=31536000; includeSubDomains; preload",
-    );
-  }
-  next();
-};
 
 app.use(compression());
-app.use(securityHeaders);
+app.use(helmet({
+  contentSecurityPolicy:false
+}))
 app.use(globalLimiter);
 
 app.use(
@@ -93,25 +88,22 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(requestOriginGuard(allowedOrigins));
 
 app.get("/", (req, res) => {
   res.send({ Api: "Hello" });
 });
+
 app.use("/api/auth", authLimiter, userRoutes);
+app.use("/api/admin", isAuthenticatedUser, isAdmin, adminRoutes);
+app.use("/api/instructor", isAuthenticatedUser, isInstructor, instructorRecordedCoursesRoutes);
 app.use("/api", messageRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", admissionRoutes);
-app.use("/api", adminRoutes);
 app.use("/api", filesUploadRoutes);
 app.use("/api", courseRoutes);
-// app.use("/api", paymentRoutes);
+app.use("/api", recordedCourseRoutes);
 
-app.use((err, req, res, next) => {
-  console.error(err);
-  const message = isProduction ? "Internal server error" : err.message;
-  return res.status(err.status || 500).json({ message });
-});
+app.use(errorMiddleware);
 
 const startServer = async () => {
   try {

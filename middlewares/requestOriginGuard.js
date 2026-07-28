@@ -9,12 +9,19 @@ export const requestOriginGuard = (allowedOrigins = []) => (req, res, next) => {
   const referer = req.get("referer");
 
   if (!origin && !referer) {
-    return res.status(403).json({ message: "Origin validation failed" });
+    return next()
+    // return res.status(403).json({ message: "Origin validation failed" });
   }
 
   let sourceOrigin = "";
+
   try {
     sourceOrigin = new URL(origin || referer).origin;
+    if (!normalizedAllowed.includes(sourceOrigin)) {
+      return res.status(403).json({
+        message: "Origin not allowed"
+      });
+    }
   } catch {
     return res.status(403).json({ message: "Invalid origin format" });
   }
