@@ -210,10 +210,6 @@ const recordedCourseSchema = new Schema(
 );
 
 recordedCourseSchema.pre("validate", function () {
-  if (!this.slug && this.title) {
-    this.slug = slugify(this.title, { lower: true, strict: true, trim: true });
-  }
-
   this.totalSections = this.sections.length;
   this.totalLessons = this.sections.reduce(
     (total, section) => total + section.lessons.length,
