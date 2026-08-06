@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { uploadThumbnail } from "../controllers/recordedCourse-media.controller.js";
+import { uploadThumbnail } from "../controllers/recorded-course-media.controller.js";
 import { isAuthenticatedUser } from "../middlewares/isAuthenticated.js";
 import isInstructor from "../middlewares/isInstructor.js";
 import upload from "../middlewares/upload.middleware.js";
-import { checkCourseExists } from "../middlewares/recordedCourse.middleware.js";
+import { checkCourseExists } from "../middlewares/recorded-course.middleware.js";
 const router = Router()
 
 router.post(

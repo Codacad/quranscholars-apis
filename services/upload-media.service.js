@@ -1,17 +1,18 @@
-import { uploadToR2 } from "../config/R2.js"
-import { optimizeImage } from './optimizeImage.service.js'
-import RecordedCourse from "../models/recorded-course/recorded-course.model.js";
+import { uploadToR2 } from "../config/r2.js"
+import { optimizeImage } from './optimize-image.service.js'
+import { validateImageFile } from '../validation/image-file.validation.js'
 import fs from "node:fs/promises";
-export async function thumbailUploadService(file, courseId) {
+export async function thumbnailUploadService(file, courseId) {
     const { path } = file
     try {
+        await validateImageFile(path)
         const optimizedImageBuffer = await optimizeImage(path)
         const key = await uploadToR2({
-            key: `courses/${courseId}/thumbnail.webp`,
+            key: `courses/${courseId}/thumbnail-${Date.now()}.webp`,
             body: optimizedImageBuffer,
             contentType: "image/webp",
         })
-        return { path: key }
+        return { thumbnail: key }
     } finally {
         try {
             await fs.unlink(file?.path);

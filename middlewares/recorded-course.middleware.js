@@ -16,6 +16,12 @@ export async function checkCourseExists(req, res, next) {
                 message: "Course not found"
             })
         }
+        if (req.user.role === 'instructor' && course.instructor.toString() !== req.user._id.toString) {
+            return res.status(403).json({
+                success: false,
+                message: "You are not authorized to perform this action"
+            })
+        }
         req.course = course;
         next()
     } catch (error) {

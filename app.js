@@ -20,7 +20,7 @@ import helmet from 'helmet';
 import { isAuthenticatedUser } from './middlewares/isAuthenticated.js';
 import { isAdmin } from './middlewares/isAdmin.js';
 import isInstructor from './middlewares/isInstructor.js';
-import recordedCourseMediaRoutes from './routes/recordedCourse-media.routes.js'
+import recordedCourseMediaRoutes from './routes/recorded-course-media.routes.js'
 // import paymentRoutes from './routes/paymentRoute.js'
 
 dns.setServers(['1.1.1.1', '8.8.8.8']);
