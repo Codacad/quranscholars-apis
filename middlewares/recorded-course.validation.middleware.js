@@ -7,5 +7,4 @@ export function recordedCourseValidationMiddleware(schema) {
             return next(error)
         }
     }
-
 }

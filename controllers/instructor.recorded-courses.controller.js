@@ -42,6 +42,15 @@ export async function createRecordedCourse(req, res, next) {
             error.statusCode = 400;
             return next(error);
         }
+        const duplicateCourse = await RecordedCourse.exists({
+            instructor: payload.instructor,
+            title: payload.title
+        })
+        if (duplicateCourse) {
+            const error = new Error(`You already have "${payload.title}" course`);
+            error.statusCode = 409;
+            return next(error);
+        }
         const recordedCourse = new RecordedCourse(payload)
         let baseSlug = slugify(payload.title, {
             lower: true,
@@ -50,12 +59,7 @@ export async function createRecordedCourse(req, res, next) {
         });
         recordedCourse.slug = `${baseSlug}-${recordedCourse._id.toString().slice(-6)}`;
         await recordedCourse.save()
-        // res.status(200).json({ success: true, message: `${recordedCourse.slug} created` })
-        res.json({
-            random: Math.random(),
-            time: new Date().toISOString(),
-            slug: recordedCourse.slug,
-        });
+        res.status(200).json({ success: true, message: `Course has been created` })
     } catch (error) {
         next(error)
     }

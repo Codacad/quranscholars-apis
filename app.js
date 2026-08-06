@@ -13,13 +13,14 @@ import adminRoutes from "./routes/admin.routes.js";
 import { dbCOnnection } from "./db.connection.js";
 import cookieParser from "cookie-parser";
 import courseRoutes from './routes/course.routes.js'
-import recordedCourseRoutes from './routes/recorded-course.routes.js'; 
-import instructorRecordedCoursesRoutes from './routes/instructor.recorded-courses.routes.js'; 
+import recordedCourseRoutes from './routes/recorded-course.routes.js';
+import instructorRecordedCoursesRoutes from './routes/instructor.recorded-courses.routes.js';
 import errorMiddleware from './middlewares/errorMiddleware.js';
 import helmet from 'helmet';
 import { isAuthenticatedUser } from './middlewares/isAuthenticated.js';
 import { isAdmin } from './middlewares/isAdmin.js';
 import isInstructor from './middlewares/isInstructor.js';
+import recordedCourseMediaRoutes from './routes/recordedCourse-media.routes.js'
 // import paymentRoutes from './routes/paymentRoute.js'
 
 dns.setServers(['1.1.1.1', '8.8.8.8']);
@@ -69,7 +70,7 @@ const authLimiter = createInMemoryRateLimiter({
 
 app.use(compression());
 app.use(helmet({
-  contentSecurityPolicy:false
+  contentSecurityPolicy: false
 }))
 app.use(globalLimiter);
 
@@ -102,6 +103,7 @@ app.use("/api", admissionRoutes);
 app.use("/api", filesUploadRoutes);
 app.use("/api", courseRoutes);
 app.use("/api", recordedCourseRoutes);
+app.use("/api", recordedCourseMediaRoutes);
 
 app.use(errorMiddleware);
 

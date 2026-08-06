@@ -172,7 +172,7 @@ const recordedCourseSchema = new Schema(
       default: "Draft",
     },
     tags: {
-      type: [String],
+      type: [{ type: String, trim: true }],
       default: [],
     },
     averageRating: {

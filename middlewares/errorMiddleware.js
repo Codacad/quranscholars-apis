@@ -7,6 +7,6 @@ export default function errorMiddleware(err, req, res, next) {
     res.status(err.statusCode).send({
         success: false,
         status: err.status,
-        message: err.message
+        message: err.code === 'LIMIT_FILE_SIZE' ? "File size exceeds the limit of 3MB" : err.message || 'Internal Server Error',
     })
 }
