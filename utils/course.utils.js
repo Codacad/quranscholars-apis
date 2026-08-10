@@ -25,7 +25,6 @@ function buildCoursePayload(body, instructorId) {
         },
 
         thumbnail: body.thumbnail,
-
         rating: body.rating || 0,
         reviewsCount: body.reviewsCount || 0,
         studentsEnrolled: body.studentsEnrolled || 0,

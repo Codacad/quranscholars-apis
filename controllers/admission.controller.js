@@ -1,5 +1,5 @@
 import Admission from "../models/admission/admission.model.js";
-import Course from "../models/courses/courses.model.js";
+import Course from "../models/course/course.model.js";
 export const admissions = async (req, res) => {
   try {
     const admissions = await Admission.find({

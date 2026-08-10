@@ -26,7 +26,7 @@ const userSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "admin", "instructor"],
       default: "user",
     },
     profilePicture: {
@@ -44,17 +44,14 @@ const userSchema = new Schema(
 );
 
 // Hash Password before saving the user
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
   if (!this.isModified("password")) {
-    return next();
+    return;
   }
-  try {
-    const saltRound = 10;
-    this.password = await bcrypt.hash(this.password, saltRound);
-    next();
-  } catch (error) {
-    next(error);
-  }
+
+  const saltRound = 10;
+  this.password = await bcrypt.hash(this.password, saltRound);
+
 });
 // Compare the password when the user log in
 userSchema.methods.comparePassword = async function (candidatePassword) {

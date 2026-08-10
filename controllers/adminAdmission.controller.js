@@ -1,5 +1,5 @@
 import Admission from "../models/admission/admission.model.js";
-import Course from "../models/courses/courses.model.js";
+import Course from "../models/course/course.model.js";
 import mongoose from "mongoose";
 
 const ALLOWED_UPDATE_FIELDS = [

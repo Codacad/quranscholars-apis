@@ -6,27 +6,37 @@
   "type": "module",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js",
+    "dev": "node --watch app.js",
     "test": "jest",
     "migrate:email_index": "node migrations/create.index.js",
-    "migrate:course_indexes": "node migrations/course.indexes.js"
+    "migrate:course_indexes": "node migrations/course.indexes.js",
+    "migrate:recorded-course_indexes": "node migrations/recorded-course.indexes.js",
+    "migrate:purchase_indexes": "node migrations/purchase.indexes.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1098.0",
     "bcrypt": "^6.0.0",
+    "bullmq": "^5.81.3",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "ffmpeg-static": "^5.3.0",
+    "ffprobe-static": "^3.1.0",
     "firebase-admin": "^10.3.0",
+    "helmet": "^8.3.0",
+    "ioredis": "^5.11.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.4",
     "multer": "^2.2.0",
     "razorpay": "^2.9.6",
-    "slugify": "^1.6.9"
+    "sharp": "^0.35.3",
+    "slugify": "^1.6.9",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",

@@ -1,4 +1,4 @@
-import Course from "../models/courses/courses.model.js";
+import Course from "../models/course/course.model.js";
 import { buildCoursePayload, validateCoursePayload } from "../utils/course.utils.js";
 // Ger Courses
 export async function getCourses(req, res) {
