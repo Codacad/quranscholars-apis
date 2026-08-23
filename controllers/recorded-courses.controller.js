@@ -2,7 +2,13 @@ import RecordedCourse from "../models/recorded-course/recorded-course.model.js"
 import User from "../models/user/user.model.js"
 import Category from "../models/course/courses-categories.model.js"
 import slugify from "slugify";
-export async function getAdminRecordedCourses(req, res, next) {
+import { trailerVideoUploadService } from "../services/trailer-video-upload.service.js";
+import { trailerVideoQueueingService } from "../services/trailer-video-queueing.service.js";
+import '../queues/video-processing.queue.js'
+
+
+// Get Recorded Courses
+export async function getRecordedCourses(req, res, next) {
     console.log("Controller executed:", Date.now());
     try {
         const { status } = req.query
@@ -17,6 +23,8 @@ export async function getAdminRecordedCourses(req, res, next) {
         next(error)
     }
 }
+
+// Create Recorded Course
 export async function createRecordedCourse(req, res, next) {
     const payload = {
         ...req.payload,
@@ -62,5 +70,45 @@ export async function createRecordedCourse(req, res, next) {
         res.status(200).json({ success: true, message: `Course has been created` })
     } catch (error) {
         next(error)
+    }
+}
+
+// Upload Video to R2
+export async function uploadTrailerVideo(req, res, next) {
+    try {
+        const { courseId } = req.params
+        const { fileName, contentType, size } = req.body;
+        const { uploadUrl, sourceKey } = await trailerVideoUploadService({
+            courseId,
+            fileName,
+            size,
+            contentType,
+            userId: req.user._id
+        })
+
+        res.status(200).json({
+            success: true,
+            message: "Upload url created",
+            uploadUrl,
+            sourceKey
+        })
+    } catch (error) {
+        console.error(error)
+        return next(error)
+    }
+}
+
+export async function processTrailerVideo(req, res, next) {
+    try {
+        const { courseId } = req.params
+        const result = await trailerVideoQueueingService({ courseId, userId: req.user._id })
+        res.status(201).json({
+            success: true,
+            message: "Video in beeing processed",
+            data: result
+        })
+    } catch (error) {
+        console.error(error)
+        return next(error)
     }
 }

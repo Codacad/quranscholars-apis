@@ -1,4 +1,4 @@
-import { uploadToR2 } from "../config/r2.js"
+import { uploadThumbnailToR2 } from "../config/r2.js"
 import { optimizeImage } from './optimize-image.service.js'
 import { validateImageFile } from '../validation/image-file.validation.js'
 import fs from "node:fs/promises";
@@ -7,7 +7,7 @@ export async function thumbnailUploadService(file, courseId) {
     try {
         await validateImageFile(path)
         const optimizedImageBuffer = await optimizeImage(path)
-        const key = await uploadToR2({
+        const key = await uploadThumbnailToR2({
             key: `courses/${courseId}/thumbnail-${Date.now()}.webp`,
             body: optimizedImageBuffer,
             contentType: "image/webp",
