@@ -8,6 +8,7 @@
     "start": "node app.js",
     "dev": "node --watch app.js",
     "test": "jest",
+    "dev:worker": "node --watch workers/video-processing.worker.js",
     "migrate:email_index": "node migrations/create.index.js",
     "migrate:course_indexes": "node migrations/course.indexes.js",
     "migrate:recorded-course_indexes": "node migrations/recorded-course.indexes.js",
@@ -34,9 +35,11 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.4",
     "multer": "^2.2.0",
+    "p-limit": "^7.3.1",
     "razorpay": "^2.9.6",
     "sharp": "^0.35.3",
     "slugify": "^1.6.9",
+    "ws": "^8.21.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {

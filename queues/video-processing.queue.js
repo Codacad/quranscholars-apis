@@ -1,11 +1,7 @@
 import { Queue } from "bullmq";
-import { apiRedisConnection } from "../config/api.redis.js";
+import { queueRedisConnection } from "../config/queue.redis.js";
 const videoQueue = new Queue("video-queue", {
-    connection: apiRedisConnection
+    connection: queueRedisConnection
 })
-
-const job = await videoQueue.getJob(1)
-// console.log(job)
-
 
 export default videoQueue

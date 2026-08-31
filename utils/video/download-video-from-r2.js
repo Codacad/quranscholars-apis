@@ -26,16 +26,12 @@ export const downloadVideoFromR2 = async ({ sourceKey, jobId }) => {
         Bucket: process.env.R2_BUCKET_NAME,
         Key: sourceKey
     })
-    console.log(process.env.R2_BUCKET_NAME)
-
+    
     const response = await R2.send(command)
 
     if (!response.Body) {
         throw new Error('R2 returned empty video stream')
     }
-
-    // await pipeline(response.Body, fs.createWriteStream(destinationPath))
-    console.log("R2 object size:", response.ContentLength);
 
     await pipeline(
         response.Body,
@@ -43,8 +39,6 @@ export const downloadVideoFromR2 = async ({ sourceKey, jobId }) => {
     );
 
     const stats = await fs.promises.stat(destinationPath);
-
-    console.log("Downloaded file size:", stats.size);
 
     return {
         destinationPath, tempDir

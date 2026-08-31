@@ -122,18 +122,41 @@ const recordedCourseSchema = new Schema(
           "UPLOADED",
           "QUEUED",
           "PROCESSING",
+          "PROCESSED",
           "COMPLETED",
-          "FAILED"
+          "FAILED",
         ],
-        default: "NOT_UPLOADED"
+        default: "PENDING"
       },
       sourceKey: {
         type: String,
         default: null
       },
-      hlsKey: {
-        type: String,
-        default: null
+      hls: {
+        masterKey: {
+          type: String,
+          default: null
+        },
+        qualities: {
+          type: [
+            {
+              quality: {
+                type: String,
+                enum: ['480p', '720p', '1080p'],
+                required: true
+              },
+              width: {
+                type: Number,
+                required: true
+              },
+              height: {
+                type: Number,
+                required: true
+              }
+            }
+          ],
+          default: []
+        },
       },
       originalFileName: {
         type: String,

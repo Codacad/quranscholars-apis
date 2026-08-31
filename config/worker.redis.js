@@ -7,7 +7,7 @@ export const workerRedisConnection = new IORedis({
 })
 
 workerRedisConnection.on("connect", () => {
-    console.log("Redis & Worker connection is successful on host: ", process.env.REDIS_HOST)
+    console.log("Redis & Worker connection is successful")
 })
 
 workerRedisConnection.on('error', (error) => {

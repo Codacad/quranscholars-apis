@@ -1,5 +1,7 @@
 import dns from 'node:dns';
 import dotenv from "dotenv";
+import http from 'http';
+import initializeWebSocket from './websocket/websocket.server.js';
 dotenv.config();
 import express from "express";
 import cors from "cors";
@@ -24,6 +26,7 @@ import recordedCourseThumbnailRoutes from './routes/recorded-course-thumbnail.ro
 
 dns.setServers(['1.1.1.1', '8.8.8.8']);
 const app = express();
+const server = http.createServer(app)
 app.set("trust proxy", 1);
 const PORT = process.env.PORT || 3000;
 app.use(cookieParser());
@@ -109,7 +112,8 @@ app.use(errorMiddleware);
 const startServer = async () => {
   try {
     await dbCOnnection();
-    app.listen(PORT, () => {
+    initializeWebSocket({ server })
+    server.listen(PORT, () => {
       console.log(`Server is running on ${PORT} Port`);
     });
   } catch (error) {
