@@ -97,8 +97,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authLimiter, userRoutes);
-app.use("/api/admin", isAuthenticatedUser, isAdmin, adminRoutes);
-app.use("/api/", isAuthenticatedUser, isInstructor, recordedCoursesRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/recorded-courses", recordedCoursesRoutes);
 app.use("/api", messageRoutes);
 app.use("/api", dashboardRoutes);
 app.use("/api", admissionRoutes);
