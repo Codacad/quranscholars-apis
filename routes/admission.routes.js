@@ -1,15 +1,16 @@
 import express from "express";
 import {
-  admissions,
+  admission,
   join,
   updateAdmissionDetails,
 } from "../controllers/admission.controller.js";
 import { isAuthenticatedUser } from "../middlewares/isAuthenticated.js";
+import isAdmissionOwner from "../middlewares/isAdmissionOwner.js";
 
 const router = express.Router();
 
-router.get("/admissions", isAuthenticatedUser, admissions);
-router.post("/admission/join", isAuthenticatedUser, join);
-router.patch("/admission/update", isAuthenticatedUser, updateAdmissionDetails);
+router.post("/admission/me", isAuthenticatedUser, join);
+router.get("/admission/me", isAuthenticatedUser, admission);
+router.patch("/admission/me", isAuthenticatedUser, updateAdmissionDetails);
 
 export default router;

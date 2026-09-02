@@ -1,5 +1,4 @@
-import { thumbnailUploadService } from "../services/upload-media.service.js";
-import fs from "node:fs/promises";
+import { thumbnailUploadService } from "../services/upload-thumbnail.service.js";
 import RecordedCourse from '../models/recorded-course/recorded-course.model.js'
 export async function uploadThumbnail(req, res, next) {
     try {

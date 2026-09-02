@@ -7,7 +7,7 @@ import {
   register,
 } from "../controllers/user.controller.js";
 import { isAuthenticatedUser } from "../middlewares/isAuthenticated.js";
-import { getRecordedCourses } from "../controllers/recorded-course.controller.js";
+import { getRecordedCourses } from "../controllers/recorded-courses.controller.js";
 const router = express.Router();
 
 // Register User

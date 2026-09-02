@@ -1,15 +1,15 @@
 import Admission from "../models/admission/admission.model.js";
 import Course from "../models/course/course.model.js";
-export const admissions = async (req, res) => {
+export const admission = async (req, res) => {
   try {
-    const admissions = await Admission.find({
+    const admission = await Admission.findOne({
       user: req.user._id,
     }).populate('selectedCourses')
       .populate("user", "fullname email role createdAt updatedAt")
       .sort({ createdAt: -1 })
       .lean();
 
-    res.status(200).json(admissions);
+    res.status(200).json(admission);
   } catch (error) {
     res.status(400).send(error.message);
   }

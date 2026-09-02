@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { uploadThumbnail } from "../controllers/recorded-course-media.controller.js";
+import { uploadThumbnail } from "../controllers/recorded-course-thumbnail.controller.js";
 import { isAuthenticatedUser } from "../middlewares/isAuthenticated.js";
 import isInstructor from "../middlewares/isInstructor.js";
 import upload from "../middlewares/upload.middleware.js";

@@ -114,9 +114,78 @@ const recordedCourseSchema = new Schema(
       trim: true,
     },
     trailerVideo: {
-      type: String,
-      trim: true,
-      default: "",
+      status: {
+        type: String,
+        enum: [
+          "NOT_UPLOADED",
+          "UPLOADING",
+          "UPLOADED",
+          "QUEUED",
+          "PROCESSING",
+          "PROCESSED",
+          "COMPLETED",
+          "FAILED",
+        ],
+        default: "PENDING"
+      },
+      sourceKey: {
+        type: String,
+        default: null
+      },
+      hls: {
+        masterKey: {
+          type: String,
+          default: null
+        },
+        qualities: {
+          type: [
+            {
+              quality: {
+                type: String,
+                enum: ['480p', '720p', '1080p'],
+                required: true
+              },
+              width: {
+                type: Number,
+                required: true
+              },
+              height: {
+                type: Number,
+                required: true
+              }
+            }
+          ],
+          default: []
+        },
+      },
+      originalFileName: {
+        type: String,
+        default: null
+      },
+      mimeType: {
+        type: String,
+        default: null
+      },
+      fileSize: {
+        type: Number,
+        default: null
+      },
+      duration: {
+        type: Number,
+        default: null
+      },
+      processingJobId: {
+        type: String,
+        default: null
+      },
+      uploadedAt: {
+        type: Date,
+        default: null,
+      },
+      processedAt: {
+        type: Date,
+        default: null,
+      }
     },
     price: {
       original: {

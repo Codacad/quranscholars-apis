@@ -14,3 +14,9 @@ export const createRecordedCourseSchema = z.object({
     ),
     tags: z.array(z.string().trim())
 })
+
+export const recordedCourseSectionValidationSchema = z.object({
+    title: z.string().trim().min(3, "Title is required & should be at least 3 characters").max(150, "Title must not be larger than 150 characters"),
+    description: z.string().trim().min(30, "Description is required & must have 30 characters at least").max(300, "description must not be larger than 300 characters"),
+    order: z.number().int().nonnegative()
+})
